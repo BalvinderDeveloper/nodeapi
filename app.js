@@ -60,11 +60,11 @@ app.get('/jewellery', (req, res) => {
     res.send(result)
   })
 })
-app.get('/jewellery', (req, res) => {
+app.get('/jewellery_type', (req, res) => {
   let jewel_type = req.query.jewel_type
   let query = {}
   if (jewel_type) {
-    query = { jewel_type }
+    query = { jewel_type:jewel_type }
   }
   db.collection('Jewllery').find(query).toArray((err, result) => {
     if (err) throw err;
@@ -77,10 +77,14 @@ app.get('/jewellery', (req, res) => {
  
 
 app.get('/category_and_filter', (req, res) => {
-  // let query = {};
-  // let hcost = Number(req.query.hcost);
-  query = { cost: { $lt: "20000" } }
-  db.collection('Jewllery').find(query).sort({cost:1}).toArray((err, result) => {
+  let query = {};
+  let sort = {cost:-1};
+  let lcost = Number(req.query.lcost);
+  let hcost = Number(req.query.hcost);
+  if(lcost && hcost){
+    query = { cost: { $lt: hcost, $gt: lcost } }
+  }
+  db.collection('Jewllery').find(query).sort(sort).toArray((err, result) => {
     if (err) throw err;
     res.send(result)
   });
